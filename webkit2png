@@ -131,7 +131,8 @@ class WebkitLoad (Foundation.NSObject, WebKit.protocols.WebFrameLoadDelegate):
                 url = self.urls.pop(0)
         else:
             AppKit.NSApplication.sharedApplication().terminate_(None)
-        print "Fetching", url, "..."
+        if not self.options.quiet:
+            print "Fetching", url
         self.resetWebview(webview)
         webview.mainFrame().loadRequest_(Foundation.NSURLRequest.requestWithURL_(Foundation.NSURL.URLWithString_(url)))
         if not webview.mainFrame().provisionalDataSource():
@@ -180,7 +181,6 @@ class WebkitLoad (Foundation.NSObject, WebKit.protocols.WebFrameLoadDelegate):
             bitmapdata = self.captureView(view)  
             self.saveImages(bitmapdata,filename,self.options)
 
-            print " ... done"
             self.getURL(webview)
 
 
@@ -236,6 +236,8 @@ examples:
        help=optparse.SUPPRESS_HELP)
     cmdparser.add_option("--js", type="string", default=None,
        help="JavaScript to execute when the window finishes loading")
+    cmdparser.add_option("-q", "--quiet", action="store_true",
+       help="quiet (errors are still displayed)")
     (options, args) = cmdparser.parse_args()
     if len(args) == 0:
         cmdparser.print_usage()
